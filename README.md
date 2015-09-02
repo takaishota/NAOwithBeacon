@@ -11,6 +11,7 @@ ohayo3の画面を転用して、ビーコンの電波の受信状態を表示�
 
 参考
 
-http://www.gaprot.jp/pickup/ibeacon/ibeacon-vol2/
-http://developers.mobage.jp/blog/ios-background-download
-http://dev.classmethod.jp/smartphone/iphone/ios-7-1-ibeacon/
+
+http://www.gaprot.jp/pickup/ibeacon/ibeacon-vol2/  
+http://developers.mobage.jp/blog/ios-background-download  
+http://dev.classmethod.jp/smartphone/iphone/ios-7-1-ibeacon/  
