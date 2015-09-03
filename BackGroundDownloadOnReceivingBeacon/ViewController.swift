@@ -78,6 +78,8 @@ class ViewController: UIViewController {
                 self.halo.radius = 90
                 self.halo.backgroundColor = UIColor(red: 0.9, green: 0.383, blue: 0.11, alpha: 1).CGColor
                 self.beaconLabel.text = "Near"
+                // ローカル通知を送信
+                self.sendNotification()
             case .Far:
                 self.halo.radius = 120
                 self.halo.backgroundColor = UIColor(red: 0, green: 0.478, blue: 1, alpha: 1).CGColor
@@ -100,6 +102,16 @@ class ViewController: UIViewController {
     // MARK: - private
     
     /**
+        ローカル通知を送信する
+    */
+    private func sendNotification() {
+        var notification:UILocalNotification = UILocalNotification()
+        notification.soundName = UILocalNotificationDefaultSoundName;
+        notification.alertTitle = "test"
+        notification.alertBody = "バックグラウンドでのビーコン受信を確認するテストです。\(nowDateString())"
+        notification.alertAction = "OPEN";
+        UIApplication.sharedApplication().presentLocalNotificationNow(notification);
+    }
     波紋上のアニメーションビューレイヤーの初期化
     */
     private func createHaloLayer() -> PulsingHaloLayer {
