@@ -100,9 +100,8 @@
 		1F271EFD1B96C9B300E288F4 /* BackGroundDownloadOnReceivingBeacon */ = {
 			isa = PBXGroup;
 			children = (
-				1F271F001B96C9B300E288F4 /* AppDelegate.swift */,
-				1F271F021B96C9B300E288F4 /* ViewController.swift */,
-				1F3F56FB1B96CAAB001E5DDF /* BeaconManager.swift */,
+				1FD209EC1B97F13200C5A84C /* ViewController */,
+				1FD209EB1B97F12900C5A84C /* Model */,
 				1FE469D21B96D1EE0073DD07 /* Main.storyboard */,
 				1F271F071B96C9B300E288F4 /* Images.xcassets */,
 				1F271F091B96C9B300E288F4 /* LaunchScreen.xib */,
@@ -134,6 +133,23 @@
 				1F271F151B96C9B400E288F4 /* Info.plist */,
 			);
 			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		1FD209EB1B97F12900C5A84C /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				1F3F56FB1B96CAAB001E5DDF /* BeaconManager.swift */,
+			);
+			name = Model;
+			sourceTree = "<group>";
+		};
+		1FD209EC1B97F13200C5A84C /* ViewController */ = {
+			isa = PBXGroup;
+			children = (
+				1F271F001B96C9B300E288F4 /* AppDelegate.swift */,
+				1F271F021B96C9B300E288F4 /* ViewController.swift */,
+			);
+			name = ViewController;
 			sourceTree = "<group>";
 		};
 		231A079713EC94EB56AB024A /* Pods */ = {
