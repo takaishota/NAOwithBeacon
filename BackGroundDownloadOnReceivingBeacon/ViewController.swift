@@ -9,7 +9,7 @@
 import UIKit
 import CoreLocation
 
-class ViewController: UIViewController {
+class ViewController: UIViewController,NSURLSessionTaskDelegate, NSURLSessionDownloadDelegate {
 
     @IBOutlet private weak var iPhoneImage: UIImageView!
     @IBOutlet private weak var userLabel: UILabel!
@@ -19,6 +19,9 @@ class ViewController: UIViewController {
     @IBOutlet private weak var debugConsole: UITextView!
     
     private var halo: PulsingHaloLayer!
+    private var downloadCount: Int = 0
+    
+    private let testJsonReturnURL = "http://jsonplaceholder.typicode.com/users"
     
     required init(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
@@ -74,12 +77,18 @@ class ViewController: UIViewController {
                 self.halo.radius = 70
                 self.halo.backgroundColor = UIColor(red: 0.854, green: 0, blue: 0, alpha: 1).CGColor
                 self.beaconLabel.text = "Immediate"
+                
+                // ローカル通知、ダウンロードを実行する
+                if downloadCount == 0 {
+                    self.sendNotification("バックグラウンドでのビーコン受信を確認するテストです。\(nowDateString())")
+                    self.runBackgroundTask()
+                }
+                
             case .Near:
                 self.halo.radius = 90
                 self.halo.backgroundColor = UIColor(red: 0.9, green: 0.383, blue: 0.11, alpha: 1).CGColor
                 self.beaconLabel.text = "Near"
-                // ローカル通知を送信
-                self.sendNotification()
+                
             case .Far:
                 self.halo.radius = 120
                 self.halo.backgroundColor = UIColor(red: 0, green: 0.478, blue: 1, alpha: 1).CGColor
@@ -104,14 +113,88 @@ class ViewController: UIViewController {
     /**
         ローカル通知を送信する
     */
-    private func sendNotification() {
+    private func sendNotification(message:String) {
+        
         var notification:UILocalNotification = UILocalNotification()
         notification.soundName = UILocalNotificationDefaultSoundName;
+        notification.fireDate = NSDate()
         notification.alertTitle = "test"
-        notification.alertBody = "バックグラウンドでのビーコン受信を確認するテストです。\(nowDateString())"
+        notification.alertBody = message
         notification.alertAction = "OPEN";
         UIApplication.sharedApplication().presentLocalNotificationNow(notification);
     }
+    
+    /**
+    バックグラウンドでダウンロード処理を実行する
+    */
+    private func runBackgroundTask() {
+        print("run background")
+        
+        // NSURLSessionで通信を行う
+        let identifier: String = "BackgroundSessionConfiguration"
+        let configuration: NSURLSessionConfiguration = NSURLSessionConfiguration.backgroundSessionConfigurationWithIdentifier(identifier)
+        var session: NSURLSession = NSURLSession(configuration: configuration, delegate: self, delegateQueue: nil)
+        
+        let url: NSURL = NSURL(string: testJsonReturnURL)!
+        let request: NSURLRequest = NSURLRequest(URL: url)
+        
+        let task: NSURLSessionDownloadTask = session.downloadTaskWithRequest(request)
+        task.resume()
+        
+        self.downloadCount = 1
+    }
+    
+    // MARK: NSURLSessionDownloadDelegate
+    
+    /**
+    ダウンロードの開始時に呼び出されるデリゲート.
+    */
+    func URLSession(session: NSURLSession, downloadTask: NSURLSessionDownloadTask, didResumeAtOffset fileOffset: Int64, expectedTotalBytes: Int64) {
+        print("start downloading")
+    }
+    
+    /**
+    タスク処理中に定期的に呼び出されるデリゲート.
+    */
+    func URLSession(session: NSURLSession, downloadTask: NSURLSessionDownloadTask, didWriteData bytesWritten: Int64, totalBytesWritten: Int64, totalBytesExpectedToWrite: Int64) {
+        
+        var per:Float = Float(totalBytesWritten/totalBytesExpectedToWrite)
+        print("\((Int)(per))% downloading")
+    }
+    
+    /**
+    ダウンロード完了時に呼ばれるメソッド
+    */
+    func URLSession(session: NSURLSession, downloadTask: NSURLSessionDownloadTask, didFinishDownloadingToURL location: NSURL) {
+        print("Downloading has been completed.")
+        self.sendNotification("ダウンロードが完了しました。")
+        
+        // ダウンロードしたデータを取り出す.
+        let data: NSData = NSData(contentsOfURL: location)!
+        let json: NSArray = NSJSONSerialization.JSONObjectWithData(data, options: NSJSONReadingOptions.AllowFragments, error: nil) as! NSArray
+        
+        if data.length > 0 {
+            print(json)
+        }
+    }
+    
+    // MARK: NSURLSessionTaskDelegate
+    
+    /**
+    タスク終了時に呼ばれるメソッド
+    */
+    func URLSession(session: NSURLSession, task: NSURLSessionTask, didCompleteWithError error: NSError?) {
+        print("Downloading has been completed.")
+        
+        if error == nil {
+            print("Downloading was succeeded")
+            
+        } else {
+            print("Downloading failed")
+        }
+    }
+    
+    /**
     波紋上のアニメーションビューレイヤーの初期化
     */
     private func createHaloLayer() -> PulsingHaloLayer {
