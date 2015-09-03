@@ -21,7 +21,8 @@ class BeaconManager: NSObject, CLLocationManagerDelegate {
     
     /// 0843のiBeaconの固定パラメータ
     private let locationManager = CLLocationManager()
-    private let beaconRegion = CLBeaconRegion(proximityUUID: NSUUID(UUIDString: "12300100-39FA-4005-860C-09362F6169DA"), identifier: NSBundle.mainBundle().bundleIdentifier)
+//    private let beaconRegion = CLBeaconRegion(proximityUUID: NSUUID(UUIDString: "12300100-39FA-4005-860C-09362F6169DA"), identifier: NSBundle.mainBundle().bundleIdentifier)
+    private let beaconRegion = CLBeaconRegion(proximityUUID: NSUUID(UUIDString: "00000000-7257-1001-B000-001C4D470726"), identifier: NSBundle.mainBundle().bundleIdentifier)
     
     class var sharedInstance : BeaconManager {
         struct Static {
